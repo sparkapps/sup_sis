@@ -58,6 +58,7 @@ class App < Sinatra::Base
   end
 
   # create a new message
+  # thanks to Rob (TA) for explaining routes
   post('/messages') do
     #step 1 create message
     name             = params[:name]
@@ -131,7 +132,7 @@ class App < Sinatra::Base
   # delete a message
   delete('/messages/:id') do
     id = params[:id]
-    $redis.delete("messages:#{id}")
+    $redis.del("messages:#{id}")
     redirect to('/messages')
   end
 

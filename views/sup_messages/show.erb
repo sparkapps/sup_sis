@@ -1,7 +1,9 @@
-<%= @message["new_post"] %>
+<%= @message["name"] %>
 
-<a href="/message/<%= @message["id"] %>/edit">Edit Message</a>
-<form action="/cheeses/<%= @cheese["id"] %>" method="POST">
+<a href="/messages/<%= @message["id"] %>/edit">Edit Message</a>
+
+<form action="/messages/<%= @message["id"] %>" method="POST">
   <input type="hidden" name="_method" value="DELETE">
-  <input type="submit" value="Delete Cheese">
+  <input type="submit" value="Delete Post">
 </form>
+
