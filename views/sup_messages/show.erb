@@ -1,9 +1,39 @@
-<%= @message["name"] %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
 
-<a href="/messages/<%= @message["id"] %>/edit">Edit Message</a>
+  <meta charset="UTF-8">
+  <title>'sup Sis!</title>
+    <h1>'sup Sis!</h1>
+    <h2>Stories from the coasts.</h2>
+    <p>A little blog for my awesome family.</p>
+    <img src="http://i.imgur.com/Xqo172y.jpg" height="300"/>
 
-<form action="/messages/<%= @message["id"] %>" method="POST">
-  <input type="hidden" name="_method" value="DELETE">
-  <input type="submit" value="Delete Post">
-</form>
+</head>
+  <body>
+    <div id="list">
+      <ul>
+        <%= @message["name"] %>
+        <br></br>
+        <%= @message["message_title"] %>
+        <br></br>
+        <%= @message["message_body"] %>
+        <br></br>
+        <%= @message["message_date"] %>
+        <br></br>
+        <%= @message["image_url"] %>
+        <br></br>
+      </ul>
+
+      <br></br>
+      <a href="/messages/<%= @message["id"] %>/edit">Edit Message</a>
+
+      <br></br>
+      <form action="/messages/<%= @message["id"] %>" method="POST">
+        <input type="hidden" name="_method" value="DELETE">
+        <input type="submit" value="Delete Post">
+      </form>
+    </div>
+  </body>
+</html>
 

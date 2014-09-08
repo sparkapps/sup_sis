@@ -1,4 +1,6 @@
 require 'sinatra/base'
+require 'securerandom'
+require 'httparty'
 require 'redis'
 require 'json'
 require 'uri'
@@ -15,11 +17,20 @@ class App < Sinatra::Base
     enable :method_override
     enable :sessions
 
+    set :session_secret, 'super secret'
+
     # setting up redis connection
-    uri = URI.parse(ENV["REDISTOGO_URL"])
+    uri    = URI.parse(ENV["REDISTOGO_URL"])
     $redis = Redis.new({:host     => uri.host,
                         :port     => uri.port,
                         :password => uri.password})
+
+    #######################
+    # API KEYS
+    #######################
+    CLIENT_ID       = "109928263333-c8iemo8vvn6iuduasisgu8pp5cqludp9.apps.googleusercontent.com"
+    CLIENT_SECRET   = "Opp7vuW-qJ6r_wr47lnzxzQl"
+    CALLBACK_URL    = "http://localhost:9292/oauth2callback"
 
     # prior to trying redis.incr, create counter
     # $counter = $redis.keys.size + 1
@@ -47,9 +58,40 @@ class App < Sinatra::Base
   end
 
   get('/messages') do
-    @messages = $redis.keys("*messages*").map { |posting| JSON.parse($redis.get(posting)) }
+    base_url        = "https://accounts.google.com/o/oauth2/auth"
+    scope           = "profile"
+    state           = SecureRandom.urlsafe_base64
+    # storing state in session because we need to compare it in a later request
+    session[:state] = state
+    @url            = "#{base_url}?scope=#{scope}&client_id=#{CLIENT_ID}&response_type=code&redirect_uri=#{CALLBACK_URL}&state=#{state}"
+
+    @messages       = $redis.keys("*messages*").map { |posting| JSON.parse($redis.get(posting)) }
     # binding.pry
     render(:erb, :"sup_messages/index", :layout => :template)
+  end
+
+  get('/oauth2callback') do
+    # compare the states to ensure the information is from who we think it is
+    code              = params[:code]
+    if session[:state]== params[:state]
+      # send a POST
+      response        = HTTParty.post(
+        "https://accounts.google.com/o/oauth2/auth",
+        :body         =>
+          {
+          code:          code,
+          grant_type:    "authorization_code",
+          client_id:     CLIENT_ID,
+          client_secret: CLIENT_SECRET,
+          redirect_uri:  CALLBACK_URL
+          },
+        :headers => {
+          "Accept"     => "application/json"
+        }
+      )
+      # binding.pry
+    end
+    redirect to("/messages")
   end
 
   # new message form
@@ -95,7 +137,7 @@ class App < Sinatra::Base
     @message      = JSON.parse(one_message)
     # binding.pry
     #rendering a show page with that message content
-    render(:erb, :"sup_messages/show")
+    render(:erb, :"sup_messages/show", :layout => :template)
   end
 
   # get a message by its ID and edit it
@@ -103,24 +145,24 @@ class App < Sinatra::Base
     id            = params[:id]
     message       = $redis.get("messages:#{id}")
     @message      = JSON.parse(message)
-    render(:erb, :"sup_messages/edit_message")
+    render(:erb, :"sup_messages/edit_message", :layout => :template)
   end
 
   # update a message
   put('/messages/:id') do
     name              = params[:name]
-    post_title        = params[:post_title]
-    post_body         = params[:post_body]
-    post_date         = params[:post_date]
+    message_title     = params[:message_title]
+    message_body      = params[:message_body]
+    message_date      = params[:message_date]
     image_url         = params[:image_url]
     id                = params[:id]
 
     updated_message   =
       {
       name:           name,
-      post_title:     post_title,
-      post_body:      post_body,
-      post_date:      post_date,
+      message_title:  message_title,
+      message_body:   message_body,
+      message_date:   message_date,
       image_url:      image_url,
       id:             id
       }
@@ -134,6 +176,17 @@ class App < Sinatra::Base
     id = params[:id]
     $redis.del("messages:#{id}")
     redirect to('/messages')
+  end
+
+  get('/messages.json') do
+    content_type :json
+    @message.to_json
+  end
+
+  get('/logout') do
+    session[:access_token] = nil
+    session[:name] = nil
+    redirect to("/")
   end
 
 end

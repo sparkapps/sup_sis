@@ -9,11 +9,21 @@
     <p>A little blog for my awesome family.</p>
     <img src="http://i.imgur.com/Xqo172y.jpg" height="300"/>
 
+    <% if session[:access_token] %>
+      <a href="/logout">Logout</a>
+    <% else %>
+      <a href="<%= @url %>">Login with Google</a>
+    <% end %>
+
+    <% if session[:name] %>
+      <h1>Welcome, <%= session[:name].capitalize %>!</h1>
+    <% end %>
+
 </head>
 
   <body>
 
-    <div id="list"
+    <div id="list">
       <ul>
         <% @messages.each do |posting| %>
 
