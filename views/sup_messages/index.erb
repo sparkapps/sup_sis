@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="UTF-8">
+  <title>'sup Sis!</title>
+    <h1>'sup Sis!</h1>
+    <h2>Stories from the coasts.</h2>
+    <p>A little blog for my awesome family.</p>
+    <img src="http://i.imgur.com/Xqo172y.jpg" height="300"/>
+
+</head>
+
+  <body>
+
+    <div id="list"
+      <ul>
+        <% @messages.each do |posting| %>
+
+          <li>
+            <h1><a href="/messages/<%= posting["id"] %>">
+                <%= posting["name"] %></a></h1>
+            <br />
+
+            <p><%= posting["message_title"] %></p>
+            </p>
+
+            <p><%= posting["message_body"] %></p>
+            </p>
+
+            <p><%= posting["message_date"] %></p>
+            </p>
+
+            <p><a href="/messages/<%= posting["id"] %>">
+               <img src="<%= posting["image_url"] %>" width="400px"/></a>
+            </p>
+
+          </li>
+
+        <% end %>
+      </ul>
+    </div>
+
+    <footer><a href="/messages/new">Add Your Post</a></footer>
+
+  </body>
+</html>

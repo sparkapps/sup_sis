@@ -1,0 +1,1 @@
+–e --color\n--format documentation\n--require spec_helper\n

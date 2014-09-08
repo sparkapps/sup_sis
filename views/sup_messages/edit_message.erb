@@ -1,0 +1,33 @@
+<form action="/messages/<%= @message["id"] %>" method="POST">
+
+    <form method="POST" action="/messages/new">
+
+    <label for="name">By: </label>
+    <input type="text" name="name" id="name" />
+
+    <br/><br/>
+
+    <label for="message_title">Post Title: </label>
+    <input type="text" name="message_title" id="message_title" />
+
+    <br/><br/>
+
+    <label for="message_body">Sup?! </label>
+    <input type="text" name="message_body" id="message_body" />
+
+    <br/><br/>
+
+    <label for="message_date">Post Date: </label>
+    <input type="text" name="message_date" id="message_date" />
+
+    <br/><br/>
+
+    <label for="image_url">Link an image</label>
+    <input type="text" name="image_url" id="image_url" />
+
+    <br/><br/>
+
+    <input type="hidden" name="_method" value="PUT">
+    <input type="submit" value="Update Post">
+
+</form>
