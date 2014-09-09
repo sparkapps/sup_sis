@@ -30,8 +30,8 @@ class App < Sinatra::Base
     #######################
     # API KEYS
     #######################
-    CLIENT_ID       = "109928263333-c8iemo8vvn6iuduasisgu8pp5cqludp9.apps.googleusercontent.com"
-    CLIENT_SECRET   = "Opp7vuW-qJ6r_wr47lnzxzQl"
+    CLIENT_ID       = "109928263333-esbgr493f8pme3cg1go5mifq7r8n3djt.apps.googleusercontent.com"
+    CLIENT_SECRET   = "wJTxxhckDMCTI78E9FDw3e4s"
     CALLBACK_URL    = "http://localhost:9292/oauth2callback"
 
     # prior to trying redis.incr, create counter
@@ -73,13 +73,11 @@ class App < Sinatra::Base
   end
 
   get('/oauth2callback') do
-    # compare the states to ensure the information is from who we think it is
-    code              = params[:code]
-    if session[:state]== params[:state]
-      # send a POST
-      response        = HTTParty.post(
+    code                = params[:code]
+    if session[:state]  == params[:state]
+      response          = HTTParty.post(
         "https://accounts.google.com/o/oauth2/token",
-        :body         =>
+        :body           =>
           {
           code:          code,
           grant_type:    "authorization_code",
@@ -87,10 +85,11 @@ class App < Sinatra::Base
           client_secret: CLIENT_SECRET,
           redirect_uri:  CALLBACK_URL
           },
-        :headers => {
-          "Accept"     => "application/json"
-        }
-      )
+        :headers        =>
+          {
+          "Accept"      => "application/json"
+          }
+        )
       session[:access_token] = response["access_token"]
       # binding.pry
     end
@@ -111,6 +110,7 @@ class App < Sinatra::Base
     message_body     = params[:message_body]
     message_date     = params[:message_date]
     image_url        = params[:image_url]
+    parse_url        = params[:parse_url]
     index            = $redis.incr("message:index")
 
     message =
@@ -123,6 +123,19 @@ class App < Sinatra::Base
       id:            index
       }
     # binding.pry
+
+    # TODO - figure out what CSS Selector to use
+    # page = Nokogiri::HTML(open("#parse_url"))
+    # # binding.pry
+    # page.css().each do |item|
+    #   puts item.text
+
+    # page = Nokogiri::HTML(open('url'))
+    # page.css('css path').children[0].to_s
+    # or
+    # page.css('title')
+    # end
+
 
     #step 2 save message with redis
     $redis.set("messages:#{index}", message.to_json)
@@ -157,7 +170,6 @@ class App < Sinatra::Base
     message_title     = params[:message_title]
     message_body      = params[:message_body]
     message_date      = params[:message_date]
-    image_url         = params[:image_url]
     id                = params[:id]
 
     updated_message   =
@@ -167,6 +179,7 @@ class App < Sinatra::Base
       message_body:   message_body,
       message_date:   message_date,
       image_url:      image_url,
+      parse_url:      parse_url,
       id:             id
       }
 
@@ -181,10 +194,32 @@ class App < Sinatra::Base
     redirect to('/messages')
   end
 
-  get('/messages.json') do
-    content_type :json
-    @message.to_json
+  get('/messages/rss/:id') do
+    id            = params[:id]
+    message       = "/messages/#{id}"
+    url           = message
+
+    open(url) do |rss|
+      feed = RSS::Parser.parse(rss)
+      puts "Title: #{feed.channel.title}"
+      feed.items.each do |item|
+        puts "Item #{item.title}"
+      end
+    end
+    render(:erb, :"sup_messages/rss", :layout => :template)
   end
+
+  # parse with Nokogiri
+
+
+  # get('/messages.json') do
+  #   content_type :json
+  #   id            = params[:id]
+  #   message       = $redis.get("messages:#{id}")
+  #   @message      = JSON.parse(message)
+  #   @json_message = @message.to_json
+  #   render(:erb, :"sup_messages/message_json", :layout => :template)
+  # end
 
   get('/logout') do
     session[:access_token] = nil

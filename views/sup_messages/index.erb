@@ -1,14 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-
-  <meta charset="UTF-8">
-  <title>'sup Sis!</title>
-    <h1>'sup Sis!</h1>
-    <h2>Stories from the coasts.</h2>
-    <p>A little blog for my awesome family.</p>
-    <img src="http://i.imgur.com/Xqo172y.jpg" height="300"/>
-
     <% if session[:access_token] %>
       <a href="/logout">Logout</a>
     <% else %>
@@ -18,8 +7,6 @@
     <% if session[:name] %>
       <h1>Welcome, <%= session[:name].capitalize %>!</h1>
     <% end %>
-
-</head>
 
   <body>
 
