@@ -1,6 +1,8 @@
 require 'sinatra/base'
 require 'securerandom'
 require 'httparty'
+require 'nokogiri'
+require 'open-uri'
 require 'redis'
 require 'json'
 require 'uri'
@@ -76,7 +78,7 @@ class App < Sinatra::Base
     if session[:state]== params[:state]
       # send a POST
       response        = HTTParty.post(
-        "https://accounts.google.com/o/oauth2/auth",
+        "https://accounts.google.com/o/oauth2/token",
         :body         =>
           {
           code:          code,
@@ -89,6 +91,7 @@ class App < Sinatra::Base
           "Accept"     => "application/json"
         }
       )
+      session[:access_token] = response["access_token"]
       # binding.pry
     end
     redirect to("/messages")
