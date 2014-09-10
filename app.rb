@@ -8,7 +8,7 @@ require 'redis'
 require 'json'
 require 'uri'
 require 'rss'
-require 'pry'
+# require 'pry'
 
 class App < Sinatra::Base
 
@@ -207,7 +207,7 @@ class App < Sinatra::Base
     @messages       = $redis.keys("*messages*").map { |posting| JSON.parse($redis.get(posting)) }
     one_message     = $redis.get("messages:#{id}")
     @message        = JSON.parse(one_message)
-    binding.pry
+    # binding.pry
     {
       "name"          => @message["name"],
       "message_title" => @message["message_title"],
