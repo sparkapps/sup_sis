@@ -20,7 +20,7 @@ html, body {
 }*/
 
 li span {
-  text-align: left;
+  text-align: center;
   font-size: 1.15em;
   list-style-type: none;
   color: black;
@@ -33,11 +33,11 @@ img {
 }
 
 header, section {
-  margin: 20px auto;
+  margin: 10px auto;
   padding: 10px 10px;
   background-color: white;
   border-radius: 10px;
-  width: 70%;
+  width: 100%;
   max-width: 800px;
   min-width: 550px;
 }
