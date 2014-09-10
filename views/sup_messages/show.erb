@@ -13,10 +13,14 @@
         <br></br>
         <%= @message["parse_url"] %>
         <br></br>
+        <p><%=@title %></p>
       </ul>
 
       <br></br>
       <a href="/messages/<%= @message["id"] %>/edit">Edit Message</a>
+
+      <br></br>
+      <a href="/as/<%= @message["id"] %>">View as JSON</a>
 
       <br></br>
       <form action="/messages/<%= @message["id"] %>" method="POST">

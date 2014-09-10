@@ -10,6 +10,8 @@
 
   <body>
 
+    <a href="/messages/new">Add Your Post</a>
+
     <div id="list">
       <ul>
         <% @messages.each do |posting| %>
@@ -28,6 +30,12 @@
             <p><%= posting["message_date"] %></p>
             </p>
 
+            <p><%= posting["image_url"] %></p>
+            </p>
+
+            <p><%= posting["parse_url"] %></p>
+            </p>
+
             <p><a href="/messages/<%= posting["id"] %>">
                <img src="<%= posting["image_url"] %>" width="400px"/></a>
             </p>
@@ -38,7 +46,7 @@
       </ul>
     </div>
 
-    <footer><a href="/messages/new">Add Your Post</a></footer>
+    <footer></footer>
 
   </body>
 </html>

@@ -1,11 +1,13 @@
 require 'sinatra/base'
 require 'securerandom'
+require 'mechanize'
 require 'httparty'
 require 'nokogiri'
 require 'open-uri'
 require 'redis'
 require 'json'
 require 'uri'
+require 'rss'
 require 'pry'
 
 class App < Sinatra::Base
@@ -30,8 +32,8 @@ class App < Sinatra::Base
     #######################
     # API KEYS
     #######################
-    CLIENT_ID       = "109928263333-esbgr493f8pme3cg1go5mifq7r8n3djt.apps.googleusercontent.com"
-    CLIENT_SECRET   = "wJTxxhckDMCTI78E9FDw3e4s"
+    CLIENT_ID       = "109928263333-cofac2a0u80o9ohkm2v65dm508pvbkgd.apps.googleusercontent.com"
+    CLIENT_SECRET   = "NYuUK42JVUxT6j7ypAjidfgS"
     CALLBACK_URL    = "http://localhost:9292/oauth2callback"
 
     # prior to trying redis.incr, create counter
@@ -113,7 +115,7 @@ class App < Sinatra::Base
     parse_url        = params[:parse_url]
     index            = $redis.incr("message:index")
 
-    message =
+    message          =
       {
       name:          name,
       message_title: message_title,
@@ -124,17 +126,14 @@ class App < Sinatra::Base
       }
     # binding.pry
 
-    # TODO - figure out what CSS Selector to use
-    # page = Nokogiri::HTML(open("#parse_url"))
-    # # binding.pry
-    # page.css().each do |item|
-    #   puts item.text
+    # Nokogiri
+    # page      = Nokogiri::HTML(open("#{parse_url}"))
+    # @title    = page.css('title')
 
-    # page = Nokogiri::HTML(open('url'))
-    # page.css('css path').children[0].to_s
-    # or
-    # page.css('title')
-    # end
+    # # Mechanize
+    # mechanize = Mechanize.new
+    # page      = mechanize.get("#{parse_url}")
+    # @content  = page.content.match /<p>(.+)<\/p>/i
 
 
     #step 2 save message with redis
@@ -170,6 +169,8 @@ class App < Sinatra::Base
     message_title     = params[:message_title]
     message_body      = params[:message_body]
     message_date      = params[:message_date]
+    image_url         = params[:image_url]
+    parse_url         = params[:parse_url]
     id                = params[:id]
 
     updated_message   =
@@ -194,36 +195,55 @@ class App < Sinatra::Base
     redirect to('/messages')
   end
 
-  get('/messages/rss/:id') do
-    id            = params[:id]
-    message       = "/messages/#{id}"
-    url           = message
+  # you're going to use the RSS maker to create a feed that includes info about each post and a dynamic link to each post's page. all of which you have already done
 
-    open(url) do |rss|
-      feed = RSS::Parser.parse(rss)
-      puts "Title: #{feed.channel.title}"
-      feed.items.each do |item|
-        puts "Item #{item.title}"
-      end
-    end
-    render(:erb, :"sup_messages/rss", :layout => :template)
+
+  # so get all the messages out of redis, put them in an array
+  # cast that to JSON then you're good
+  get('/as/:id') do
+    content_type :json
+    id = params[:id]
+    # binding.pry
+    @messages       = $redis.keys("*messages*").map { |posting| JSON.parse($redis.get(posting)) }
+    one_message     = $redis.get("messages:#{id}")
+    @message        = JSON.parse(one_message)
+    binding.pry
+    {
+      "name"          => @message["name"],
+      "message_title" => @message["message_title"],
+      "message_body"  => @message["message_body"],
+      "message_date"  => @message["message_date"],
+      "image_url"     => @message["image_url"],
+    }.to_json
   end
 
-  # parse with Nokogiri
+  get('/rss') do
+    content_type 'text/xml'
 
+    messages = $redis.keys("*messages*").map { |posting| JSON.parse($redis.get(posting)) }
 
-  # get('/messages.json') do
-  #   content_type :json
-  #   id            = params[:id]
-  #   message       = $redis.get("messages:#{id}")
-  #   @message      = JSON.parse(message)
-  #   @json_message = @message.to_json
-  #   render(:erb, :"sup_messages/message_json", :layout => :template)
-  # end
+    rss = RSS::Maker.make("atom") do |maker|
+      maker.channel.author = "Neil Sidhu"
+      maker.channel.updated = Time.now.to_s
+      maker.channel.about = "http://127.0.0.1:9292/rss"
+      maker.channel.about = "http://localhost:9292"
+      maker.channel.title = "Message"
+
+      messages.each do |message|
+        maker.items.new_item do |item|
+          item.id         = message["id"].to_s
+          item.link       = "/messages/#{message["id"]}"
+          item.title      = "Just another message!"
+          item.updated    = Time.now.to_s
+        end
+      end
+    end
+    rss.to_s
+  end
 
   get('/logout') do
     session[:access_token] = nil
-    session[:name] = nil
+    # binding.pry
     redirect to("/")
   end
 
