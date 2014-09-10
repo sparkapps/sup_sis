@@ -16,13 +16,11 @@
       <ul>
         <% @messages.each do |posting| %>
 
-          <li>
+          <ul>
             <h1><a href="/messages/<%= posting["id"] %>">
                 <%= posting["name"] %></a></h1>
-            <br />
 
-            <p><%= posting["message_title"] %></p>
-            </p>
+            <h3><%= posting["message_title"] %></p>
 
             <p><%= posting["message_body"] %></p>
             </p>
@@ -40,13 +38,11 @@
                <img src="<%= posting["image_url"] %>" width="400px"/></a>
             </p>
 
-          </li>
+          </ul>
 
         <% end %>
       </ul>
     </div>
-
-    <footer></footer>
 
   </body>
 </html>

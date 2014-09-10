@@ -1,17 +1,17 @@
   <body>
     <div id="list">
       <ul>
-        <%= @message["name"] %>
+        <p>A post by:  <%= @message["name"] %></p>
         <br></br>
-        <%= @message["message_title"] %>
+        <p>Post Title:  <%= @message["message_title"] %></p>
         <br></br>
-        <%= @message["message_body"] %>
+        <p>Sup!  <%= @message["message_body"] %></p>
         <br></br>
-        <%= @message["message_date"] %>
+        <p>Date:  <%= @message["message_date"] %></p>
         <br></br>
-        <%= @message["image_url"] %>
+        <p>Image:  <%= @message["image_url"] %></p>
         <br></br>
-        <%= @message["parse_url"] %>
+        <p>Check out this link!  <%= @message["parse_url"] %></p>
         <br></br>
         <p><%=@title %></p>
       </ul>
@@ -21,6 +21,9 @@
 
       <br></br>
       <a href="/as/<%= @message["id"] %>">View as JSON</a>
+
+      <br></br>
+      <a href="/rss">View RSS</a>
 
       <br></br>
       <form action="/messages/<%= @message["id"] %>" method="POST">

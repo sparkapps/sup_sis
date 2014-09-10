@@ -1,8 +1,15 @@
 html, body {
-  background-color: white;
   text-align: center;
 }
 
+/*html {
+  background: url(http://i.imgur.com/Xqo172y.jpg)
+  no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: auto;
+}*/
 
 .info-category {
   font-weight: bold;
@@ -16,18 +23,18 @@ li span {
   text-align: left;
   font-size: 1.15em;
   list-style-type: none;
-  color: navy;
+  color: black;
 }
 
 img {
   border-radius: 10px;
-  float: left;
-  margin-right: 80px;
+  float: center;
+  margin-right: 10px;
 }
 
 header, section {
   margin: 20px auto;
-  padding: 10px 40px;
+  padding: 10px 10px;
   background-color: white;
   border-radius: 10px;
   width: 70%;
@@ -51,17 +58,40 @@ section {
   font-size: 1.5em;
 }
 
+h1 {
+  text-align: center;
+  font-size: 14pt;
+  color: #778899;
+  text-align: center;
+}
+
 h2 {
   text-align: center;
-  font-size: 18pt;
-  color: navy;
+  font-size: 12pt;
+  color: #778899;
+  text-align: center;
+}
+
+h3 {
+  text-align: center;
+  font-size: 11pt;
+  color: #191970;
+  text-align: center;
+}
+
+p {
+  text-align: center;
+  font-size: 11pt;
+  color: #708090;
+  text-align: center;
 }
 
 footer {
-  margin: 30px 0px 40px;
+  margin: 30px 0px 30px 0px;
   color: white;
   font-size: 1.25em;
   cursor: default;
+  text-align: center;
 }
 
 .message {
