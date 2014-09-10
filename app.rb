@@ -34,7 +34,8 @@ class App < Sinatra::Base
     #######################
     CLIENT_ID       = "109928263333-cofac2a0u80o9ohkm2v65dm508pvbkgd.apps.googleusercontent.com"
     CLIENT_SECRET   = "NYuUK42JVUxT6j7ypAjidfgS"
-    CALLBACK_URL    = "http://localhost:9292/oauth2callback"
+    CALLBACK_URL    = "http://tranquil-reef-9096.herokuapp.com/oauth2callback"
+    # CALLBACK_URL    = "http://localhost:9292/oauth2callback"
 
     # prior to trying redis.incr, create counter
     # $counter = $redis.keys.size + 1
