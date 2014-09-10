@@ -32,8 +32,8 @@ class App < Sinatra::Base
     #######################
     # API KEYS
     #######################
-    CLIENT_ID       = "109928263333-cofac2a0u80o9ohkm2v65dm508pvbkgd.apps.googleusercontent.com"
-    CLIENT_SECRET   = "NYuUK42JVUxT6j7ypAjidfgS"
+    CLIENT_ID       = "109928263333-qtgs1fd13qmi0ns3r94q84b8ing71680.apps.googleusercontent.com"
+    CLIENT_SECRET   = "_MLTgNJ0BPjT1N5Gl5Dy47GZ"
     CALLBACK_URL    = "http://tranquil-reef-9096.herokuapp.com/oauth2callback"
     # CALLBACK_URL    = "http://localhost:9292/oauth2callback"
 
