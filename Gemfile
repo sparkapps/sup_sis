@@ -1,3 +1,4 @@
+source 'https://rubygems.org'
 ruby "2.1.2"
 
 source 'https://rubygems.org'
@@ -8,14 +9,12 @@ gem 'httparty'
 gem 'nokogiri'
 gem 'mechanize'
 
-# only used in development locally
 group :development do
   gem 'pry'
   gem 'shotgun'
 end
 
 group :production do
-  # gems specific just in the production environment
 end
 
 group :test do
